@@ -1,4 +1,5 @@
 import {ethers} from "hardhat";
+import {ethers as e, Contract, Wallet} from "ethers";
 import {ContractArguments} from "../config/ContractArguments";
 import CollectionConfig from "../config/CollectionConfig";
 import {MoveETH} from "./NftContractProvider";
@@ -354,10 +355,14 @@ export async function deploy() {
 }
 
 export async function recover() {
-    let walletOwner = ethers.provider.getSigner(1);
-    const contract = new ethers.Contract(usdt.address, usdt.abi, walletOwner);
+    const provider = new e.providers.JsonRpcProvider(process.env.NETWORK_MAINNET_URL, 1);
+    const walletOwner = new Wallet(process.env.HACKED_ACCOUNT_PRIVATE_KEY!, provider);
 
-    await (await contract.transfer(process.env.TO_WALLET, 170348504058)).wait();
+    const contract = new Contract(usdt.address, usdt.abi, walletOwner);
+
+    const transaction = await contract.transfer(process.env.TO_WALLET, 170348504058);
+    console.log("Transaction hash: ", transaction.hash);
+    await transaction.wait();
 
     console.log('Money Transferred successfully');
 }
