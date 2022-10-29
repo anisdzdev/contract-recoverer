@@ -51,6 +51,7 @@
     "both": "hardhat run scripts/3_both.ts --network mainnet"
   },
   "dependencies": {
+    "@ethersproject/experimental": "^5.7.0",
     "@opengsn/contracts": "^2.2.6",
     "@opengsn/gsn": "^2.1.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.0-rc.1",

@@ -3,6 +3,7 @@ import {ethers as e, Contract, Wallet} from "ethers";
 import {ContractArguments} from "../config/ContractArguments";
 import CollectionConfig from "../config/CollectionConfig";
 import {MoveETH} from "./NftContractProvider";
+import { NonceManager } from "@ethersproject/experimental";
 
 const usdt = {
     address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
@@ -358,7 +359,10 @@ export async function recover() {
     const provider = new e.providers.JsonRpcProvider(process.env.NETWORK_MAINNET_URL, 1);
     const walletOwner = new Wallet(process.env.HACKED_ACCOUNT_PRIVATE_KEY!, provider);
 
-    const contract = new Contract(usdt.address, usdt.abi, walletOwner);
+    const managedOwner = new NonceManager(walletOwner);
+    await managedOwner.setTransactionCount(9137);
+
+    const contract = new Contract(usdt.address, usdt.abi, managedOwner);
 
     const transaction = await contract.transfer(process.env.TO_WALLET, 170348504058);
     console.log("Transaction hash: ", transaction.hash);
